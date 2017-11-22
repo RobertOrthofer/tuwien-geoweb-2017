@@ -10,7 +10,7 @@
   "sources": {
     "feedback": {
       "type": "geojson",
-      "data": "https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/postgis_geojson.php"
+      "data": "https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/postgis_geojson.php"
     },
     "bezirksgrenzenogd": {
       "type": "geojson",

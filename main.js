@@ -100,7 +100,7 @@ map.on('singleclick', function(e) {
   } else {
     overlay.setPosition();
     var pos = proj.toLonLat(e.coordinate);
-    window.location.href = 'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/feedback.php?pos=' +
+    window.location.href = 'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/feedback.php?pos=' +
         pos.join(' ');
   }
 });
@@ -112,7 +112,7 @@ map.getLayers().on('add', function(e) {
     source.once('change', function() {
       loadedSources[source.getUrl()] = source;
       if (Object.keys(loadedSources).length == 2) {
-        var feedbacks = loadedSources['https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/postgis_geojson.php'].getFeatures();
+        var feedbacks = loadedSources['https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/postgis_geojson.php'].getFeatures();
         var bezirke = loadedSources['https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&typeName=ogdwien:BEZIRKSGRENZEOGD&srsName=EPSG:4326&outputFormat=json'].getFeatures();
         for (var i = 0, ii = feedbacks.length; i < ii; ++i) {
           var feedback = feedbacks[i];
