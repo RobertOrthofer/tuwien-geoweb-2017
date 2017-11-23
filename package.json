@@ -7,8 +7,7 @@
   "dependencies": {
     "javascript-autocomplete": "^1.0.3",
     "ol": "4.5.0",
-    "ol-hashed": "^1.0.2",
-    "ol-mapbox-style": "2.7.2"
+    "ol-hashed": "^1.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
