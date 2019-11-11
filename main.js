@@ -1,23 +1,23 @@
 import 'ol/ol.css';
-import Map from 'ol/map';
-import View from 'ol/view';
-import TileLayer from 'ol/layer/tile';
-import Stamen from 'ol/source/stamen';
-import VectorLayer from 'ol/layer/vector';
-import Vector from 'ol/source/vector';
-import GeoJSON from 'ol/format/geojson';
-import Style from 'ol/style/style';
-import Circle from 'ol/style/circle';
-import Fill from 'ol/style/fill';
-import Stroke from 'ol/style/stroke';
-import Overlay from 'ol/overlay';
-import proj from 'ol/proj';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import Stamen from 'ol/source/Stamen';
+import VectorLayer from 'ol/layer/Vector';
+import Vector from 'ol/source/Vector';
+import GeoJSON from 'ol/format/GeoJSON';
+import Style from 'ol/style/Style';
+import Circle from 'ol/style/Circle';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Overlay from 'ol/Overlay';
+import {fromLonLat, toLonLat} from 'ol/proj';
 import sync from 'ol-hashed';
 
 const map = new Map({
   target: 'map',
   view: new View({
-    center: proj.fromLonLat([16.37, 48.2]),
+    center: fromLonLat([16.37, 48.2]),
     zoom: 13
   })
 });
@@ -90,7 +90,7 @@ map.on('singleclick', function(e) {
     overlay.setPosition(e.coordinate);
   } else {
     overlay.setPosition();
-    var pos = proj.toLonLat(e.coordinate);
+    var pos = toLonLat(e.coordinate);
     window.location.href =
         'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/feedback.php?pos=' +
         pos.join(' ');
