@@ -14,6 +14,7 @@ import Overlay from 'ol/Overlay';
 import {fromLonLat, toLonLat} from 'ol/proj';
 import sync from 'ol-hashed';
 
+// define the map
 const map = new Map({
   target: 'map',
   view: new View({
@@ -21,12 +22,15 @@ const map = new Map({
     zoom: 13
   })
 });
+
+// watercolor background layer
 map.addLayer(new TileLayer({
   source: new Stamen({
     layer: 'watercolor'
   })
 }));
 
+// OGD layer of districts of vienna
 const bezirkeLayer = new VectorLayer({
   source: new Vector({
     url: 'https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&typeName=ogdwien:BEZIRKSGRENZEOGD&srsName=EPSG:4326&outputFormat=json',
@@ -35,15 +39,19 @@ const bezirkeLayer = new VectorLayer({
 });
 map.addLayer(bezirkeLayer);
 
-const layer = new VectorLayer({
+
+// layer containing existing feedback points
+// postgis_geojson.php needs deliver a valid GeoJSON!
+const feedbackLayer = new VectorLayer({
   source: new Vector({
     url: 'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/postgis_geojson.php',
     format: new GeoJSON()
   })
 });
-map.addLayer(layer);
+map.addLayer(feedbackLayer);
 
-layer.setStyle(function(feature) {
+// set the style of existing feedback points
+feedbackLayer.setStyle(function(feature) {
   return new Style({
     image: new Circle({
       radius: 7,
@@ -58,9 +66,12 @@ layer.setStyle(function(feature) {
   });
 });
 
+
+// sync view of map with the url-hash
 sync(map);
 
-var overlay = new Overlay({
+// define an Overlay, which should appear on the map on user-click
+const overlay = new Overlay({
   element: document.getElementById('popup-container'),
   positioning: 'bottom-center',
   offset: [0, -10],
@@ -71,44 +82,49 @@ overlay.getElement().addEventListener('click', function() {
   overlay.setPosition();
 });
 
+// define what happens when user clicks on the map
 map.on('singleclick', function(e) {
-  var markup = '';
+  let markup = ''; // the variable "markup" is html code, as string
   map.forEachFeatureAtPixel(e.pixel, function(feature) {
-    var properties = feature.getProperties();
-    markup += `${markup && '<hr>'}<table>`;
-    for (var property in properties) {
+    const properties = feature.getProperties();
+    markup += markup + '<hr><table>';
+    for (const property in properties) {
       if (property != 'geometry') {
-        markup += `<tr><th>${property}</th><td>${properties[property]}</td></tr>`;
+        markup += '<tr><th>' + property + '</th><td>' + properties[property] + '</td></tr>';
       }
     }
     markup += '</table>';
   }, {
-    layerFilter: (l) => l === layer
+    layerFilter: (l) => l === feedbackLayer
   });
-  if (markup) {
+  if (markup) { // if any table was created (= feature already existed at clicked point)
     document.getElementById('popup-content').innerHTML = markup;
     overlay.setPosition(e.coordinate);
-  } else {
+  } else { // if no feature existed on clicked point
     overlay.setPosition();
-    var pos = toLonLat(e.coordinate);
+    const pos = toLonLat(e.coordinate);
     window.location.href =
         'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/feedback.php?pos=' +
         pos.join(' ');
   }
 });
 
+
+/**
+ * function to calculate statistics for districts
+ * sets the property 'FEEDBACKS' for each district to the number of feedbacks inside
+ */
 function calculateStatistics() {
-  const feedbacks = layer.getSource().getFeatures();
+  const feedbacks = feedbackLayer.getSource().getFeatures();
   const bezirke = bezirkeLayer.getSource().getFeatures();
   if (feedbacks.length > 0 && bezirke.length > 0) {
-    for (var i = 0, ii = feedbacks.length; i < ii; ++i) {
-      var feedback = feedbacks[i];
-      for (var j = 0, jj = bezirke.length; j < jj; ++j) {
-        var bezirk = bezirke[j];
-        var count = bezirk.get('FEEDBACKS') || 0;
-        var feedbackGeom = feedback.getGeometry();
-        if (feedbackGeom &&
-            bezirk.getGeometry().intersectsCoordinate(feedbackGeom.getCoordinates())) {
+    for (let i = 0, ii = feedbacks.length; i < ii; ++i) {
+      const feedback = feedbacks[i];
+      for (let j = 0, jj = bezirke.length; j < jj; ++j) {
+        const bezirk = bezirke[j];
+        let count = bezirk.get('FEEDBACKS') || 0;
+        const feedbackGeom = feedback.getGeometry();
+        if (feedbackGeom && bezirk.getGeometry().intersectsCoordinate(feedbackGeom.getCoordinates())) {
           ++count;
         }
         bezirk.set('FEEDBACKS', count);
@@ -116,11 +132,14 @@ function calculateStatistics() {
     }
   }
 }
+// we need both layers to calculate the statistics
+// try to calculate the statistics when either is loaded
 bezirkeLayer.getSource().once('change', calculateStatistics);
-layer.getSource().once('change', calculateStatistics);
+feedbackLayer.getSource().once('change', calculateStatistics);
 
+// set the style of the district according to the number of feedbacks
 bezirkeLayer.setStyle(function(feature) {
-  var fillColor;
+  let fillColor;
   const feedbackCount = feature.get('FEEDBACKS');
   if (feedbackCount <= 1) {
     fillColor = 'rgba(247, 252, 185, 0.7';
