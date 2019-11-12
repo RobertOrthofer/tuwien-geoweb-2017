@@ -104,7 +104,7 @@ map.on('singleclick', function(e) {
     overlay.setPosition();
     const pos = toLonLat(e.coordinate);
     window.location.href =
-        'https://student.ifip.tuwien.ac.at/geoweb/2019/ifip/map/feedback.php?pos=' +
+        'https://student.ifip.tuwien.ac.at/geoweb/2019/g10/map/feedback.php?pos=' +
         pos.join(' ');
   }
 });
