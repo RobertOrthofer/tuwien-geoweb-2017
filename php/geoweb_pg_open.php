@@ -3,8 +3,8 @@
 // Im Connectionstring sind die Verbindungsdaten anzugeben:
 // "host=... dbname=... user=... password=..."
 $dbhost = 'localhost';
-$dbname = 'geoweb2017';
-$dbuser = 'geoweb2017';
+$dbname = 'geoweb2019';
+$dbuser = 'geoweb2019';
 $dbpass = 'xxx';
 
 // Verbindung zum PostgreSQL-Datenbank herstellen (bei Fehler Abbruch)

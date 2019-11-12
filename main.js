@@ -44,7 +44,7 @@ map.addLayer(bezirkeLayer);
 // postgis_geojson.php needs deliver a valid GeoJSON!
 const feedbackLayer = new VectorLayer({
   source: new Vector({
-    url: 'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/postgis_geojson.php',
+    url: 'https://student.ifip.tuwien.ac.at/geoweb/2019/g10/map/postgis_geojson.php',
     format: new GeoJSON()
   })
 });
@@ -104,7 +104,7 @@ map.on('singleclick', function(e) {
     overlay.setPosition();
     const pos = toLonLat(e.coordinate);
     window.location.href =
-        'https://student.ifip.tuwien.ac.at/geoweb/2017/ifip/map/feedback.php?pos=' +
+        'https://student.ifip.tuwien.ac.at/geoweb/2019/ifip/map/feedback.php?pos=' +
         pos.join(' ');
   }
 });
